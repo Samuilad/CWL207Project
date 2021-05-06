@@ -1,5 +1,14 @@
 from imdb import IMDb
 
+
+class Actor:
+    money_made = 0
+    movie_Ids = []
+
+    def __init__(self, name):
+        self.name = name
+
+
 ia = IMDb()
 # 47 movie Ids
 movieIDs = ['0284137', '1187043', '0248126', '1166100', '0441048', '0234000', '1024943',
@@ -11,43 +20,49 @@ movieIDs = ['0284137', '1187043', '0248126', '1166100', '0441048', '0234000', '1
             '0805184', '0422091', '0250690', '0294662', '1185420']
 
 movie = ia.get_movie('1187043')
-
+print(movie['box office'].keys())
 budget = movie['box office']['Cumulative Worldwide Gross'].split()
 
-print(budget[0][1:-1])
+money = budget[0][1:-1]
 
-movieIDsSmall = ['0284137', '1187043', '0248126', '1166100', '0441048', '0234000', '1024943']
-
-
-def get_movies_list(movie_ids):
-    """
-    takes in movie Ids
-    returns a list of movie objects
-    """
-    movies = []
-    for id in movie_ids:
-        movies.append(ia.get_movie(id))
-    return movies
+movieIDsSmall = ['0238936']
 
 
-def sort_characters_to_movies(movies):
+def find_movies_played_by_actor(movie_ids):
     """
     parameter: movie object list
     returns a dictionary that holds actor names as keys and the movies they appear in as values
     """
     actors = {}
-    for movie in movies:
-        for actor in movie['cast']:
+    for id in movie_ids:
+        for actor in ia.get_movie(id)['cast']:
             if not (actor in actors.keys()):
-                titles = [movie]
-                actors[actor] = titles
+                actors[actor['name']] = Actor(actor)
+                actors[actor['name']].movie_Ids.append(id)
             else:
-                actors[actor].append(movie)
+                actors[actor['name']].movie_Ids.append(id)
     return actors
 
 
-actors_in_movies = sort_characters_to_movies(get_movies_list(movieIDs))
+def calculate_average_movie_grossing_per_actor(actors):
+    relevant_actors = []
+    for actor in actors.keys():
+        if len(actors[actor].movie_Ids) >= 5:
+            print(actor)
 
-for key in actors_in_movies.keys():
-    if len(actors_in_movies[key]) >= 5:
-        print(len(actors_in_movies[key]))
+            for id in actors[actor].movie_Ids:
+                if 'Cumulative Worldwide Gross' in ia.get_movie(id)['box office'].keys():
+                    gross_data = ia.get_movie(id)['box office']['Cumulative Worldwide Gross'].split()
+                    actors[actor].money_made += int(gross_data[0][1:-1].replace(',',''))
+
+            actors[actor].money_made = actors[actor].money_made / len(actors[actor].movie_Ids)
+            print(actors[actor].money_made)
+            relevant_actors.append(actors[actor])
+
+    return relevant_actors
+
+
+actors_in_movies = find_movies_played_by_actor(movieIDsSmall)
+print(ia.get_movie(actors_in_movies["Shah Rukh Khan"].movie_Ids[9])['box office'].keys())
+
+#calculate_average_movie_grossing_per_actor(actors_in_movies)
