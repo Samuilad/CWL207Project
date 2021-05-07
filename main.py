@@ -1,16 +1,13 @@
 from imdb import IMDb
 
+import matplotlib.pyplot as plt
 
-class Actor:
-    money_made = 0
-    movie_Ids = []
-
-    def __init__(self, name):
-        self.name = name
-
+from Data_Sorting import find_movies_played_by_actor
 
 ia = IMDb()
+
 # 47 movie Ids
+
 movieIDs = ['0284137', '1187043', '0248126', '1166100', '0441048', '0234000', '1024943',
             '0254481', '1182937', '0456144', '0213890', '0238936', '0488798', '0871510',
             '0169102', '0807758', '1146325', '0420332', '0439662', '1017456', '0451833',
@@ -19,50 +16,42 @@ movieIDs = ['0284137', '1187043', '0248126', '1166100', '0441048', '0234000', '1
             '0307873', '0419058', '0448206', '1092005', '0151150', '0418362', '0499375',
             '0805184', '0422091', '0250690', '0294662', '1185420']
 
-movie = ia.get_movie('1187043')
-print(movie['box office'].keys())
-budget = movie['box office']['Cumulative Worldwide Gross'].split()
 
-money = budget[0][1:-1]
-
-movieIDsSmall = ['0238936']
+movieIDsSmall = ['0284137', '1187043', '0248126', '1166100', '0441048']
 
 
-def find_movies_played_by_actor(movie_ids):
-    """
-    parameter: movie object list
-    returns a dictionary that holds actor names as keys and the movies they appear in as values
-    """
-    actors = {}
-    for id in movie_ids:
-        for actor in ia.get_movie(id)['cast']:
-            if not (actor in actors.keys()):
-                actors[actor['name']] = Actor(actor)
-                actors[actor['name']].movie_Ids.append(id)
-            else:
-                actors[actor['name']].movie_Ids.append(id)
-    return actors
 
+# x axis values
+actors = []
+# corresponding y axis values
+average_earning = []
 
-def calculate_average_movie_grossing_per_actor(actors):
-    relevant_actors = []
-    for actor in actors.keys():
-        if len(actors[actor].movie_Ids) >= 5:
-            print(actor)
+# x-coordinates of left sides of bars
+left = []
 
-            for id in actors[actor].movie_Ids:
-                if 'Cumulative Worldwide Gross' in ia.get_movie(id)['box office'].keys():
-                    gross_data = ia.get_movie(id)['box office']['Cumulative Worldwide Gross'].split()
-                    actors[actor].money_made += int(gross_data[0][1:-1].replace(',',''))
+actors_in_movies = find_movies_played_by_actor(movieIDs)
 
-            actors[actor].money_made = actors[actor].money_made / len(actors[actor].movie_Ids)
-            print(actors[actor].money_made)
-            relevant_actors.append(actors[actor])
+for actor in actors_in_movies.keys():
+    i = 1
+    if len(actors_in_movies[actor].movie_Ids) >= 6:
+        left.append((i * .5) + 1)
+        i += 1
+        actors_in_movies[actor].calculate_average_movie_rating()
+        actors.append(str(actors_in_movies[actor].name))
+        average_earning.append(actors_in_movies[actor].average_money_made)
+        print("{} 's movies made {} on average!".format(actors_in_movies[actor].name,actors_in_movies[actor].average_money_made))
 
-    return relevant_actors
+# plotting a bar chart
+plt.barh(actors, average_earning)
 
+# naming the x-axis
+plt.xlabel('Adjusted Gross in Rs (Billion(s))')
+# naming the y-axis
+plt.ylabel('Actor / Actress')
+# plot title
+plt.title('Average Adjusted Gross per Actor / Actress')
 
-actors_in_movies = find_movies_played_by_actor(movieIDsSmall)
-print(ia.get_movie(actors_in_movies["Shah Rukh Khan"].movie_Ids[9])['box office'].keys())
+plt.tight_layout()
 
-#calculate_average_movie_grossing_per_actor(actors_in_movies)
+# function to show the plot
+plt.show()
