@@ -3,26 +3,33 @@ from imdb import IMDb
 
 class Actor:
 
-    def __init__(self, name, average_money_made=0, movie_ids=None):
-        if movie_ids is None:
-            movie_ids = []
+    def __init__(self, name):
         self.name = str(name)
-        self.average_money_made = average_money_made
-        self.movie_Ids = movie_ids
+        self.average_money_made = 0
+        self.movie_Ids = []
+        self.average_rating_by_movie = 0
+        self.average_top_250_ranking = 0
 
-    def calculate_average_movie_rating(self):
+    def calculate_average_adjusted_gross(self):
+        """
+        :return: average adjusted gross amount based off of the movies they appear in
+        """
         money_made = 0
         for ids in self.movie_Ids:
             if ids in movie_ids_and_money.keys():
                 money_made += movie_ids_and_money[ids]
         self.average_money_made = money_made / len(self.movie_Ids)
 
+    def calculate_average_rating(self):
+        """
+        :return: average rating for actor based off the movie ratings they appear in
+        """
+        ia = IMDb()
+        rating_sum = 0
+        for ids in self.movie_Ids:
+            rating_sum += ia.get_movie(ids)['rating']
+        self.average_rating_by_movie = rating_sum / len(self.movie_Ids)
 
-
-# print(ia.get_movie(actors_in_movies["Shah Rukh Khan"].movie_Ids[9])['box office'].keys())
-
-
-# calculate_average_movie_grossing_per_actor(actors_in_movies)
 
 movie_ids_and_money = {'0284137': 2865500000, '1187043': 2695000000, '0248126': 1727000000, '1166100': 1705000000,
                        '0441048': 1467800000, '0234000': 1387600000, '1024943': 1332100000,
