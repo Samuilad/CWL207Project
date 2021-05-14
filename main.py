@@ -14,14 +14,13 @@ movieIDs = ['0284137', '1187043', '0248126', '1166100', '0441048', '0234000', '1
 
 movieIDsSmall = ['0284137', '1187043', '0248126', '1166100', '0441048']
 
-#bar_graph = Graphs(movieIDs)
+bar_graph = Graphs(movieIDs)
 
-#bar_graph.plot_average_actor_adjusted_gross_graph()
+bar_graph.plot_average_actor_adjusted_gross_graph()
 
-#bar_graph.plot_average_actor_rating_by_movie()
+bar_graph.plot_average_actor_rating_by_movie()
 
 
 ia = IMDb()
 
 print(ia.get_movie('0284137')['cast'][0])
-

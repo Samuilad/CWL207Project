@@ -8,7 +8,6 @@ class Actor:
         self.average_money_made = 0
         self.movie_Ids = []
         self.average_rating_by_movie = 0
-        self.average_top_250_ranking = 0
 
     def calculate_average_adjusted_gross(self):
         """

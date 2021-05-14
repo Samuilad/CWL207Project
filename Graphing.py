@@ -15,7 +15,7 @@ def find_movies_played_by_actor(movie_ids):
     for ids in movie_ids:
         for actor in ia.get_movie(ids)['cast']:
             if not (actor['name'] in actors.keys()):
-                actors[actor['name']] = Actor(actor)
+                actors[actor['name']] = Actor(actor['name'])
                 actors[actor['name']].movie_Ids.append(ids)
             else:
                 actors[actor['name']].movie_Ids.append(ids)
